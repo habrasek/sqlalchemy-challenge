@@ -80,9 +80,13 @@ def begin(start):
     maxi = session.query(func.max(Measurement.tobs)).filter(Measurement.date >= start).all()
     mini = session.query(func.min(Measurement.tobs)).filter(Measurement.date >= start).all()
     
+    x = jsonify(average=avg[0][0], maximum=maxi[0][0], minimum=mini[0][0])
     
     session.close()
-    return(f"The average is: {avg[0][0]}</br>The maximum is: {maxi[0][0]}<br/>The minimum is: {mini[0][0]}")
+    
+    #I could only return the json, not all of the values indicdually
+#    return(f"The average is: {avg[0][0]}</br>The maximum is: {maxi[0][0]}<br/>The minimum is: {mini[0][0]}")
+    return(x)
 
 @app.route("/api/v1.0/<start>/<end>")
 def end(start, end):
@@ -92,11 +96,16 @@ def end(start, end):
     maxi = session.query(func.max(Measurement.tobs)).filter(and_(start<= Measurement.date, Measurement.date <=end)).all()
     mini = session.query(func.min(Measurement.tobs)).filter(and_(start<= Measurement.date, Measurement.date <=end)).all()
     
+    alls = session.query(func.avg(Measurement.tobs), func.max(Measurement.tobs), func.min(Measurement.tobs)).\
+    filter(and_(start<= Measurement.date, Measurement.date <=end)).all()
+    
+    x = jsonify(average=avg[0][0], maximum=maxi[0][0], minimum=mini[0][0])
     
     session.close()
-    return(f"The average is: {avg[0][0]} </br>The maximum is: {maxi[0][0]}<br/>The minimum is: {mini[0][0]}")
+#    return jsonify(average=avg[0][0], maximum=maxi[0][0], minimum=mini[0][0])
+#    return(f"{x}, The average is: {avg[0][0]} </br>The maximum is: {maxi[0][0]}<br/>The minimum is: {mini[0][0]}<br/>")
+    return(x)
     
-    return(f"start: {start} \nend: {end}")
 
 
 
